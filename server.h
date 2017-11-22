@@ -10,10 +10,10 @@ class serv
     // queue_ptr MSG_queue;//(new sh_queue());
     // listener_ptr SHListener;//(new listener(1488));
     // receiver_ptr SHReceiver;//(new receiver());
-    socket_map_ptr smp;
+    socket_map_ptr smp ( new ( std::map<std::string, socket_ptr> ) );
 
    public:
-    serv (){smp.reset ( new ( std::map<std::string, socket_ptr> ) );};
+    serv (){};
     ~serv (){};
 
     void run ();

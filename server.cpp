@@ -5,7 +5,9 @@ void serv::run ()
     try {
         boost::thread_group threads;
         boost::asio::io_service service;
-
+        
+        
+        
         MSG_queue_ptr q (
             new ( boost::lockfree::queue<std::string*, boost::lockfree::capacity<128>> ) );
 //smp сделать полем класса
@@ -22,11 +24,12 @@ void serv::run ()
 }
 
 void serv::stop () {
-    boost::system::error_code errCode;
+    int errCode = 0;
     for ( auto it = smp->begin (); it != smp->end (); ++it ) {
         
         it->second->shutdown(boost::asio::ip::tcp::socket::shutdown_both, errCode);
         it->second->close();
+        it->exclude();
         
     }
 }

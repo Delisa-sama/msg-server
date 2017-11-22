@@ -20,20 +20,22 @@ typedef boost::shared_ptr<boost::lockfree::queue<std::string*, boost::lockfree::
     MSG_queue_ptr;
 typedef boost::shared_ptr<boost::asio::ip::tcp::socket> socket_ptr;
 
-typedef boost::shared_ptr<std::map<std::string, socket_ptr>> socket_map_ptr;
+typedef boost::shared_ptr<std::map<std::string, socket_ptr, bool>> user_map_ptr;
 
-class listener
+typedef 
+
+    class listener
 {
     // std::list<boost::thread> threads_list;
     // boost::lockfree::queue<boost::thread> threads_queue;
    public:
-    static void listen ( socket_ptr sock, MSG_queue_ptr messageQueue, socket_map_ptr smp );
+    static void listen ( socket_ptr sock, MSG_queue_ptr messageQueue, user_map_ptr smp );
     static size_t read_complete ( char* buff, boost::system::error_code& err, size_t bytes );
     listener (){};
     ~listener (){};
     static void handle_connections ( boost::asio::io_service* service,
                                      MSG_queue_ptr q,
                                      int port,
-                                     socket_map_ptr smp );
+                                     user_map_ptr smp );
 };
 #endif

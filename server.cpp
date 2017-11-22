@@ -9,7 +9,7 @@ void serv::run ()
         MSG_queue_ptr q (
             new ( boost::lockfree::queue<std::string*, boost::lockfree::capacity<128>> ) );
 //smp сделать полем класса
-        socket_map_ptr smp ( new ( std::map<std::string, socket_ptr> ) );
+        //socket_map_ptr smp ( new ( std::map<std::string, socket_ptr> ) );
         //sender* sender_= new sender;
         threads.create_thread (
             boost::bind ( listener::handle_connections, &service, q, 1488, smp ) );
@@ -22,11 +22,11 @@ void serv::run ()
 }
 
 void serv::stop () {
-//    int errCode = 0;
-//    for ( auto it = smp->begin (); it != smp->end (); ++it ) {
-//        
-//        it->second->shutdown(boost::asio::ip::tcp::socket::shutdown_both, errCode);
-//        it->second->close();
-//        
-//    }
+    boost::system::error_code errCode;
+    for ( auto it = smp->begin (); it != smp->end (); ++it ) {
+        
+        it->second->shutdown(boost::asio::ip::tcp::socket::shutdown_both, errCode);
+        it->second->close();
+        
+    }
 }

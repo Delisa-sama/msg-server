@@ -1,6 +1,6 @@
 #include <server.h>
 
-void serv::run ()
+void server::run ()
 {
     try {
         boost::thread_group threads;
@@ -23,7 +23,7 @@ void serv::run ()
     }
 }
 
-void serv::stop () {
+void server::stop () {
     int errCode = 0;
     for ( auto it = smp->begin (); it != smp->end (); ++it ) {
         

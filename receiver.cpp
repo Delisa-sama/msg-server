@@ -5,16 +5,32 @@
 
 //Константы для типов сообщений
 
-bool logout(const char* log, user_map_prt smp)
+bool receiver::logout ( const char* log, user_map_ptr smp )
 {
-    
-    //Сменить статус на false
-    
+    //Сменить статус у соответствующего User на Offline и выполнить функцию Notify_all
+    for ( auto it = smp->begin (); it != smp->end (); ++it ) {
+        if ( it->first == log ) {
+            it->second->second = false;
+        }
+    }
 }
 
-bool auth ( const char* log, const char* pass )
+bool receiver::reg ( const char* log, const char* pass )
 {
-    // read json file
+    //нужно где-то помещать пользователя в мультисэт пользователей,
+    //а тут он будет записываться в json
+    try {
+        UserList.get<std::string> ( log );
+    } catch ( boost::property_tree::ptree_bad_path ) {
+        UserList.put ( log, pass );
+        return true;
+    }
+    return false;
+}
+
+bool receiver::auth ( const char* log, const char* pass )
+{
+    //авторизация должна проходить первым сообщением, т.е. сразу после sock.accept
     try {
         std::string FindedPass = UserList.get<std::string> ( log );
         if ( pass == FindedPass ) {
@@ -28,14 +44,18 @@ bool auth ( const char* log, const char* pass )
     }
 }
 
-bool isExist ( const char* search_log, const char* requeset_log )
+bool receiver::isExist ( const char* search_log, User* requester_User, user_map_ptr smp )
 {
     try {
         std::string FindedUser = UserList.get<std::string> ( log );
         if ( search_log == FindedUser ) {
             //Добавить в таблицу отслеживаемых юзеров
-            
-            mul.insert(std::pair<FindedUser, std::map<std::string>>);
+            for ( auto it = smp->begin (); it != smp->end (); ++it ) {
+                if ( it->getLogin == login ) {
+                    std::cout << login << std::endl;
+                    it->Friends.insert(requester_User);
+                }
+            }
             return true
         } else {
             return false
@@ -46,32 +66,28 @@ bool isExist ( const char* search_log, const char* requeset_log )
     }
 }
 
-bool send_ ( std::string* msg, std::string login, user_map_ptr smp )
+bool receiver::send_ ( std::string* msg, std::string login, user_map_ptr smp )
 {
-    //    std::string login = getBlock ( *msg, 3 );
     int bytes = 0;
     for ( auto it = smp->begin (); it != smp->end (); ++it ) {
-        if ( it->first == login ) {
+        if ( it->getLogin == login ) {
             std::cout << login << std::endl;
-            //            send_ ( msg, it->second );
-            bytes = it->second->write_some ( boost::asio::buffer ( *msg ) );
+            bytes = it->sock->write_some ( boost::asio::buffer ( *msg ) );
         }
     }
-    //    return sock->write_some ( boost::asio::buffer ( *msg ) );
     return bytes == sizeof ( *msg );
 }
 
 void receiver::loop ( MSG_queue_ptr messageQueue, user_map_ptr smp )
 {
     // code:typenum:login:text/pass/login
-    // 1:MSG; 2:login; 5:isExist
 
     // Каждый клиент запрашивает isExist, для каждого запрошенного юзера хранить список юзеров,
     // запросивших isExist на него
     // После isExist отправить статус о существовании пользователя и онлайн он или нет
     // При подключении/отключении юзера отправлять сообщение всем юзерам отслеживающим данного
     // boost::thread_group threads;
-    std::cout << "LOOPED123" << std::endl;
+    std::cout << "LOOPED" << std::endl;
     while ( true ) {
         std::string* msg = ( new std::string ( "" ) );
         if ( !messageQueue->empty () ) {
@@ -92,6 +108,7 @@ void receiver::loop ( MSG_queue_ptr messageQueue, user_map_ptr smp )
                     result = isExist ( getBlock ( *msg, 3 ) );
                     break;
                 }
+                //отправка результата
                 std::string newMsg ( getBlock ( *msg, 1 ) + ":" );
                 if ( result ) {
                     newMsg += "0";
@@ -101,44 +118,5 @@ void receiver::loop ( MSG_queue_ptr messageQueue, user_map_ptr smp )
                 send_ ( &newMsg, getBlock ( *msg, 2 ), smp );
             }
         }
-
-        // check queue
-        /*if ( !messageQueue->empty () ) {
-            messageQueue->pop ( msg );
-        }
-
-        if ( ( *msg != "" ) && ( msg != NULL ) ) {
-            std::cout << *msg << std::endl;
-            // msg
-            if ( *msg[4] == "1" ) {
-                // RECIEVE
-                threads.create_thread (
-                    boost::bind ( sender::send, getBlock(*msg, 2), getBlock(*msg, 4) , smp ) );
-            }
-            // login
-            else if ( *msg[4] == "2" ) {
-                if (auth(getBlock(*msg,2), getBlock(*msg,4)))
-                {
-                    threads.create_thread (
-                    boost::bind ( sender::send, getBlock(*msg, 2), "0" , smp ) );
-                } else {
-
-                    threads.create_thread (
-                    boost::bind ( sender::send, getBlock(*msg, 2), "1" , smp ) );
-                };
-
-            }
-            // Register
-            else if ( *msg[4] == "3" ) {
-            }
-            // isOnline
-            else if ( *msg[4] == "4" ) {
-            }
-            // isExist
-            else if ( *msg[4] == "5" ) {
-            }
-        };*/
-        // delete msg;
     }
-    // threads.join_all ();
 }

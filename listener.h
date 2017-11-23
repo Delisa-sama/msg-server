@@ -1,28 +1,14 @@
 #ifndef LISTENER_H
 #define LISTENER_H
-#include <string.h>
+#include <types.h>
 #include <boost/asio.hpp>
 #include <boost/asio/basic_socket_acceptor.hpp>
 #include <boost/asio/io_service.hpp>
-#include <boost/asio/ip/tcp.hpp>
-#include <boost/lockfree/queue.hpp>
 #include <boost/system/error_code.hpp>
 #include <boost/thread/thread.hpp>
 #include <list>
-#include <map>
 #include <queue>
 #include <system_error>
-
-// using boost;
-
-// typedef boost::shared_ptr<sh_queue> queue_ptr;
-typedef boost::shared_ptr<boost::lockfree::queue<std::string*, boost::lockfree::capacity<128>>>
-    MSG_queue_ptr;
-typedef boost::shared_ptr<boost::asio::ip::tcp::socket> socket_ptr;
-
-typedef boost::shared_ptr<std::map<std::string, socket_ptr, bool>> user_map_ptr;
-
-typedef 
 
     class listener
 {

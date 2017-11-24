@@ -10,7 +10,7 @@
 #include <queue>
 #include <system_error>
 
-    class listener
+class listener
 {
     // std::list<boost::thread> threads_list;
     // boost::lockfree::queue<boost::thread> threads_queue;
@@ -22,6 +22,7 @@
     static void handle_connections ( boost::asio::io_service* service,
                                      MSG_queue_ptr q,
                                      int port,
-                                     user_map_ptr smp );
+                                     user_map_ptr smp,
+                                     boost::property_tree::ptree* ptree_ );
 };
 #endif

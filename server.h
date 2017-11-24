@@ -7,7 +7,7 @@
 
 class server
 {
-    socket_map_ptr smp ( new ( std::map<std::string, socket_ptr> ) );
+    user_map_ptr smp ( new std::multiset<boost::shared_ptr<User>> );
 
    public:
     server (){};

@@ -2,6 +2,6 @@
 
 int main ()
 {
-    serv s;
+    server s;
     s.run ();
 }

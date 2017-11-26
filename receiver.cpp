@@ -4,55 +4,39 @@
 #include <string.h>
 #include <iostream>
 
-//Константы для типов сообщений
-
-bool receiver::logout ( std::string* log, user_map_ptr smp )
-{
-    //Сменить статус у соответствующего User на Offline и выполнить функцию Notify_all
-    for ( auto it = smp->begin (); it != smp->end (); ++it ) {
-        if ( *( it->getLogin () ) == *log ) {
-            it->setStatus ( Offline );
-            it->Notify_all ();
-        }
-    }
-}
-
-// bool receiver::reg ( const char* log, const char* pass )
-//{
-//    //нужно где-то помещать пользователя в мультисэт пользователей,
-//    //а тут он будет записываться в json
-//    try {
-//        UserList.get<std::string> ( log );
-//    } catch ( boost::property_tree::ptree_bad_path ) {
-//        UserList.put ( log, pass );
-//        return true;
-//    }
-//    return false;
-//}
-
-bool receiver::isExist ( std::string* search_log, socket_ptr requester_User, user_map_ptr smp )
+bool isExist ( std::string search_log,
+               std::string requester_User,
+               user_map_ptr smp,
+               boost::property_tree::ptree* ptree_ )
 {
     try {
-        std::string FindedUser = UserList.get<std::string> ( log );
-        if ( search_log == FindedUser ) {
+        std::string FindedUser = ptree_->get<std::string> ( search_log );
+        if ( FindedUser != "" ) {
             //Добавить в таблицу отслеживаемых юзеров
+            bool flag = false;
+            socket_ptr tmp;
             for ( auto it = smp->begin (); it != smp->end (); ++it ) {
-                if ( i ( t->getLogin () ) == search_log ) {
-                    std::cout << search_log << std::endl;
-                    ( it->getFriends () ).insert ( requester_User );
+                if ( ( !flag ) && ( *( it->get ()->getLogin () ) == requester_User ) ) {
+                    tmp = it->get ()->getSock ();
+                    flag = true;
                 }
+                if ( ( *( it->get ()->getLogin () ) == search_log ) && ( flag ) ) {
+                    std::cout << search_log << std::endl;
+
+                    ( it->get ()->getFriends () )->insert ( tmp );
+                }
+                return true;
             }
-            return true
-        } else {
-            return false
-        };
+        }
     } catch ( boost::property_tree::ptree_bad_path ) {
         std::cerr << "Not Found" << std::endl;
         return false;
     }
 }
 
-void receiver::loop ( MSG_queue_ptr messageQueue, user_map_ptr smp )
+void receiver::loop ( MSG_queue_ptr messageQueue,
+                      user_map_ptr smp,
+                      boost::property_tree::ptree* ptree_ )
 {
     // code:typenum:login:text/pass/login
 
@@ -69,30 +53,28 @@ void receiver::loop ( MSG_queue_ptr messageQueue, user_map_ptr smp )
             if ( ( *msg != "" ) && ( msg != NULL ) ) {
                 bool result = false;
 
-                switch ( getBlock ( *msg, 2 )[0] ) {
+                switch ( getBlock ( msg, 2 )[0] ) {
                 case '1':
-                    result = send_ ( getBlock ( *msg, 4 ), getBlock ( *msg, 3 ), smp );
+                    result = send_ ( getBlock ( msg, 4 ), getBlock ( msg, 3 ), smp );
                     break;
-                //                case '2':
-                //                    //авторизация
-                //                    result = auth ( getBlock ( *msg, 3 ), getBlock ( *msg, 4
-                //                    ) );
-                //                    break;
                 case '2':
                     // isExist
-                    result = isExist ( getBlock ( *msg, 3 ), , smp );
+                    result = isExist ( getBlock ( msg, 3 ), getBlock ( msg, 4 ), smp, ptree_ );
                     break;
                 }
+
                 //отправка результата
-                std::string* newMsg = new std::string ( getBlock ( *msg, 1 ) + ":" );
+                std::string* newMsg = new std::string ( getBlock ( msg, 1 ) + ":" );
+
                 if ( result ) {
-                    newMsg += "0";
+                    *newMsg += "0";
                 } else {
-                    newMsg += "1";
+                    *newMsg += "1";
                 };
-                send_ ( newMsg, getBlock ( *msg, 2 ), smp );
+                send_ ( *newMsg, getBlock ( msg, 2 ), smp );
                 delete newMsg;
             }
             delete msg;
         }
     }
+}

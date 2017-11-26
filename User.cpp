@@ -6,21 +6,24 @@ User::User ( std::string* Log, std::string* Pass, socket_ptr sock_, Status statu
     Password = *Pass;
     sock = sock_;
     status = status_;
+    Friends = new std::set<socket_ptr>;
 }
 
-User::~User () {}
-User::Notify_all ()
+User::~User () { delete Friends; }
+void User::Notify_all ()
 {
     for ( auto it = Friends->begin (); it != Friends->end (); ++it ) {
-        //Написать, ответ в форме isOnline
         char tmp;
         if ( status ) {
-            tmp = '0'
+            tmp = '0';
         } else {
-            tmp = '1'
+            tmp = '1';
         };
-        std::string newMsg* = new std::string ( Log + ":" + );
-        it->write_some ( boost::asio::buffer ( *newMsg ) );
+
+        std::string* newMsg = new std::string ( Login + ":" + tmp );
+
+        it->get ()->write_some ( boost::asio::buffer ( *newMsg ) );
+
         delete newMsg;
     }
 }

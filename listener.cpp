@@ -23,17 +23,29 @@ void listener::listen ( socket_ptr sock,
 
         if ( bytes > 0 ) {
             std::cout << "readed" << std::endl;
-            std::string* msg = new std::string ( buff, bytes );
-
+            std::string* msg = new std::string ( buff, 256 );
+            
             if ( !auth_flag ) {
-                boost::property_tree::read_json ( "Users.json", *ptree_ );
+                try {
+                    
+                    std::cout << "readjson" << std::endl;
+                    
+                    boost::property_tree::read_json ( "Users.json", *ptree_ );
+                } catch ( ... ) {
+                    ptree_->clear();
+                    std::cout << "putjson" << std::endl;
+                    ptree_->put ( getBlock ( msg, 3 ), getBlock ( msg, 4 ) );
+                    auth_flag = true;
+                };
+                
+                std::cout << "auth" << std::endl;
                 auth_flag =
-                    auth ( getBlock ( msg, 1 ), getBlock ( msg, 2 ), smp, sock, ptree_ );
-
+                    auth ( getBlock ( msg, 3 ), getBlock ( msg, 4 ), smp, sock, ptree_ );
+                messageQueue->push ( msg );
             } else {
+                std::cout << *msg << "PUSHED" << std::endl;
                 messageQueue->push ( msg );
             }
-            delete msg;
         } else {
             std::cout << "error" << std::endl;
         }

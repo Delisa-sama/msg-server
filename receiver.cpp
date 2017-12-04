@@ -9,6 +9,7 @@ bool isExist ( std::string search_log,
                user_map_ptr smp,
                boost::property_tree::ptree* ptree_ )
 {
+    return true;
     try {
         std::string FindedUser = ptree_->get<std::string> ( search_log );
         if ( FindedUser != "" ) {
@@ -38,43 +39,43 @@ void receiver::loop ( MSG_queue_ptr messageQueue,
                       user_map_ptr smp,
                       boost::property_tree::ptree* ptree_ )
 {
-    // code:typenum:login:text/pass/login
-
-    // Каждый клиент запрашивает isExist, для каждого запрошенного юзера хранить список юзеров,
-    // запросивших isExist на него
-    // После isExist отправить статус о существовании пользователя и онлайн он или нет
-    // При подключении/отключении юзера отправлять сообщение всем юзерам отслеживающим данного
-    // boost::thread_group threads;
     std::cout << "LOOPED" << std::endl;
     while ( true ) {
-        std::string* msg = ( new std::string ( "" ) );
         if ( !messageQueue->empty () ) {
+            std::string* msg;
             messageQueue->pop ( msg );
-            if ( ( *msg != "" ) && ( msg != NULL ) ) {
+            std::cout << *msg << std::endl;
+            if ( ( msg != NULL ) && ( *msg != "" ) ) {
                 bool result = false;
-
-                switch ( getBlock ( msg, 2 )[0] ) {
-                case '1':
+                if ( ( *msg )[5] == '\16' ) {
+                    std::cout.flush () << "send: " << *msg << "to" << getBlock ( msg, 3 )
+                                       << std::endl;
                     result = send_ ( getBlock ( msg, 4 ), getBlock ( msg, 3 ), smp );
-                    break;
-                case '2':
-                    // isExist
-                    result = isExist ( getBlock ( msg, 3 ), getBlock ( msg, 4 ), smp, ptree_ );
-                    break;
-                }
 
-                //отправка результата
-                std::string* newMsg = new std::string ( getBlock ( msg, 1 ) + ":" );
-
-                if ( result ) {
-                    *newMsg += "0";
                 } else {
-                    *newMsg += "1";
-                };
-                send_ ( *newMsg, getBlock ( msg, 2 ), smp );
-                delete newMsg;
+                    std::string* newMsg = new std::string ( getBlock ( msg, 1 ) + ":", 256 );
+                    if ( ( *msg )[5] == '\4' ) {
+                        std::cout.flush () << "iEx" << std::endl;
+                        result =
+                            isExist ( getBlock ( msg, 3 ), getBlock ( msg, 4 ), smp, ptree_ );
+                        *( newMsg ) += '\4';
+                    } else if ( ( *msg )[5] == '\1' ) {
+                        std::cout.flush () << "Auth!!!" << std::endl;
+                        result = true;
+                        *( newMsg ) += '\1';
+                    }
+
+                    if ( result ) {
+                        *newMsg += ":0";
+                    } else {
+                        *newMsg += ":1";
+                    };
+                    std::cout.flush () << *newMsg << std::endl;
+                    send_ ( *newMsg, getBlock ( msg, 3 ), smp );
+                    delete newMsg;
+                }
+                delete msg;
             }
-            delete msg;
         }
     }
 }

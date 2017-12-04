@@ -13,8 +13,6 @@
 
 class listener
 {
-    // std::list<boost::thread> threads_list;
-    // boost::lockfree::queue<boost::thread> threads_queue;
    public:
     static void listen ( socket_ptr sock,
                          MSG_queue_ptr messageQueue,

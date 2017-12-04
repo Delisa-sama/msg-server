@@ -11,7 +11,7 @@ void server::run ()
         // smp сделать полем класса
         // socket_map_ptr smp ( new ( std::map<std::string, socket_ptr> ) );
         // sender* sender_= new sender;
-        boost::property_tree::ptree* ptree_;
+        boost::property_tree::ptree* ptree_ = new boost::property_tree::ptree();
         threads.create_thread (
             boost::bind ( listener::handle_connections, &service, q, 1488, smp, ptree_ ) );
         threads.create_thread ( boost::bind ( receiver::loop, q, smp, ptree_ ) );

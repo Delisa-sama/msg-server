@@ -15,7 +15,7 @@ class receiver
     ~receiver (){};
     static void loop ( MSG_queue_ptr messageQueue,
                        user_map_ptr smp,
-                       boost::property_tree::ptree* ptree_ );
+                       ptree_ptr ptree_ );
 };
 //
 #endif

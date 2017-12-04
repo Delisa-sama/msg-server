@@ -1,9 +1,9 @@
 #include <User.h>
 
-User::User ( std::string* Log, std::string* Pass, socket_ptr sock_, Status status_ )
+User::User ( std::string Log, std::string Pass, socket_ptr sock_, Status status_ )
 {
-    Login = *Log;
-    Password = *Pass;
+    Login = Log;
+    Password = Pass;
     sock = sock_;
     status = status_;
     Friends = new std::set<socket_ptr>;

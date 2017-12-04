@@ -11,7 +11,7 @@ class User
     std::set<socket_ptr>* Friends;
 
    public:
-    User ( std::string* Log, std::string* Pass, socket_ptr sock_, Status status_ );
+    User ( std::string Log, std::string Pass, socket_ptr sock_, Status status_ );
     ~User ();
 
     const std::string* getLogin () { return const_cast<std::string*> ( &Login ); };

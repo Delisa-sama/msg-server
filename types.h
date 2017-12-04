@@ -9,7 +9,7 @@
 #include <set>
 
 
-
+typedef boost::shared_ptr<boost::property_tree::ptree> ptree_ptr;
 typedef boost::shared_ptr<boost::lockfree::queue<std::string*, boost::lockfree::capacity<128>>>
     MSG_queue_ptr;
 typedef boost::shared_ptr<boost::asio::ip::tcp::socket> socket_ptr;

@@ -17,32 +17,33 @@ void listener::listen ( socket_ptr sock,
     int bytes;
     bool auth_flag = false;
     boost::system::error_code ec;
-    
-    while ( ec == 0 ) {
-        for ( int i = 0; i < 256; i++ ) {
-            buff[i] = '\0';
-        }
-        
-        bytes = sock->read_some ( boost::asio::buffer ( buff ), ec );
 
+    while ( ec == 0 ) {
+//        for ( int i = 0; i < 256; i++ ) {
+//            buff[i] = '\0';
+//        }
+
+        bytes = sock->read_some ( boost::asio::buffer ( buff ), ec );
+        buff[bytes + 1] = '\0';
         if ( bytes > 0 ) {
             std::cout << "readed" << std::endl;
-            std::string* msg = new std::string ( buff, 256 );
-
+            msg_ptr msg ( new std::string ( buff ) );
+            std::cout << "DEBUG     " << ( buff ) << std::endl;
             if ( !auth_flag ) {
-                std::cout << "putjson" << std::endl;
-                //std::cout << *msg << std::endl;
+                std::cout << "DEBUG     "
+                          << "putjson" << std::endl;
+                // std::cout << *msg << std::endl;
                 ptree_->put ( *( getBlock ( msg, 3 ) ), *( getBlock ( msg, 4 ) ) );
                 auth_flag = true;
 
-                std::cout << "auth " << *( getBlock ( msg, 3 ) ) << std::endl;
-                auth_flag = auth ( *( getBlock ( msg, 3 ) ), *( getBlock ( msg, 4 ) ), smp,
-                                   sock, ptree_ );
+                std::cout << "DEBUG     "
+                          << "auth " << *( getBlock ( msg, 3 ) ) << std::endl;
+                auth_flag =
+                    auth ( getBlock ( msg, 3 ), getBlock ( msg, 4 ), smp, sock, ptree_ );
             }
-            std::cout << *msg << "PUSHED" << std::endl;
-            while ( !messageQueue->is_lock_free () ) {
-            }
+
             messageQueue->push ( msg );
+            std::cout << "DEBUG     " << ( *msg ) << "PUSHED" << std::endl;
         }
     }
     std::cout << "Disconnected" << std::endl;

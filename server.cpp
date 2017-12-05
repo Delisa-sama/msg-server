@@ -6,15 +6,11 @@ void server::run ()
         boost::thread_group threads;
         boost::asio::io_service service;
 
-        MSG_queue_ptr q (
-            new ( boost::lockfree::queue<std::string*, boost::lockfree::capacity<128>> ) );
-        // smp сделать полем класса
-        // socket_map_ptr smp ( new ( std::map<std::string, socket_ptr> ) );
-        // sender* sender_= new sender;
+        MSG_queue_ptr q ( new Shared_queue () );
         ptree_ptr ptree_ ( new boost::property_tree::ptree );
         try {
-            //boost::property_tree::read_json ( "Users.json", *ptree_ );
-
+            // boost::property_tree::read_json ( "Users.json", *ptree_ );
+            ptree_->put ( "admin", "admin" );
         } catch ( ... ) {
             ptree_->clear ();
         };

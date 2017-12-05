@@ -1,3 +1,3 @@
-#include <string>
+#include <types.h>
 
-std::string* getBlock ( std::string* msg, int num );
+msg_ptr getBlock ( msg_ptr msg, int num );

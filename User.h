@@ -1,6 +1,7 @@
 #ifndef USER_H
 #define USER_H
 #include <types.h>
+#include <list>
 
 class User
 {
@@ -11,11 +12,11 @@ class User
     std::set<socket_ptr>* Friends;
 
    public:
-    User ( std::string Log, std::string Pass, socket_ptr sock_, Status status_ );
+    User ( msg_ptr Log, msg_ptr Pass, socket_ptr sock_, Status status_ );
     ~User ();
 
-    const std::string* getLogin () { return const_cast<std::string*> ( &Login ); };
-    const std::string* getPass () { return const_cast<std::string*> ( &Password ); };
+    std::string getLogin () { return Login; };
+    std::string getPass () { return Password ; };
     socket_ptr getSock () { return sock; };
     Status getStatus () { return status; };
     void setStatus ( Status status_ ) { status = status_; };

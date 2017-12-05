@@ -7,9 +7,8 @@
 #include <boost/asio/io_service.hpp>
 #include <boost/system/error_code.hpp>
 #include <boost/thread/thread.hpp>
-#include <list>
-#include <queue>
 #include <system_error>
+#include <Shared_queue.h>
 
 class listener
 {

@@ -1,8 +1,7 @@
 #include <User.h>
 #include <types.h>
-#include <string.h>
-bool auth ( std::string log,
-            std::string pass,
+bool auth ( msg_ptr log,
+            msg_ptr pass,
             user_map_ptr smp,
             socket_ptr sock,
             ptree_ptr ptree_ );

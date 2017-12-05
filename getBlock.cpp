@@ -1,17 +1,24 @@
 #include <getBlock.h>
 #include <boost/thread.hpp>
-std::string* getBlock ( std::string* msg, int num )
+#include <iostream>
+msg_ptr getBlock ( msg_ptr msg, int num )
 {
+    std::string tmpMsg ( *msg );
+
+    std::cout << "DEBUG     getBlock       " << num << tmpMsg << std::endl;
+    std::string tmp ( "" );
     int count = 1;
-    std::string* tmp = new std::string ( "\0", 256 );
     for ( int i = 0;; i++ ) {
-        if ( ( *msg )[i] == ':' ) {
+        if ( tmpMsg[i] == ':' ) {
             count++;
-        } else if ( count == num ) {
-            ( *tmp ) += ( *msg )[i];
-        } else if ( ( count > num ) || ( i == msg->length () ) ) {
+        } else if ( ( count > num ) || ( tmpMsg[i] == '\0' ) ) {
             break;
-        };
+        } else if ( count == num ) {
+            tmp += tmpMsg[i];
+        }
     }
-    return tmp;
+    std::cout << tmp << std::endl;
+    msg_ptr tmp_ptr ( new std::string ( tmp ) );
+    std::cout << "DEBUG     getBlock       " << ( *tmp_ptr ) << std::endl;
+    return tmp_ptr;
 }

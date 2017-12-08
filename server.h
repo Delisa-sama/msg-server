@@ -1,14 +1,18 @@
+#ifndef SERVER_H
+#define SERVER_H
 #include <listener.h>
 #include <receiver.h>
 
 class server
 {
-    user_map_ptr smp;
-
    public:
-    server () { smp.reset ( new ( std::list<boost::shared_ptr<User>> ) ); };
+    server () { smp.reset (new (std::list<boost::shared_ptr<User>>)); };
     ~server (){};
 
     void run ();
     void stop ();
+
+   private:
+    user_map_ptr smp;
 };
+#endif

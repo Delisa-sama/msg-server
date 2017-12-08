@@ -1,3 +1,6 @@
-#include <User.h>
+#ifndef SEND_H
+#define SEND_H
 #include <types.h>
-bool send_ ( msg_ptr msg, msg_ptr login, user_map_ptr smp );
+#include <user.h>
+bool send_ (msg_ptr msg, msg_ptr login, user_map_ptr smp);
+#endif

@@ -1,3 +1,6 @@
-#include <User.h>
+#ifndef LOGOUT_H
+#define LOGOUT_H
 #include <types.h>
-bool logout ( msg_ptr log, user_map_ptr smp );
+#include <user.h>
+bool logout(msg_ptr log, user_map_ptr smp);
+#endif

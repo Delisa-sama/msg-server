@@ -1,6 +1,9 @@
 #include <user.h>
 
-User::User (msg_ptr Log, msg_ptr Pass, socket_ptr sock_, Status status_)
+User::User (msg_ptr Log,
+            msg_ptr Pass,
+            socket_ptr sock_,
+            types::Status status_)
 {
     Login = *Log;
     Password = *Pass;
@@ -13,14 +16,9 @@ User::~User () { delete Friends; }
 void User::Notify_all ()
 {
     for (auto it = Friends->begin (); it != Friends->end (); ++it) {
-        char tmp;
-        if (status != 0) {
-            tmp = '1';
-        } else {
-            tmp = '0';
-        };
+        char tmp = static_cast<char> (status);
 
-        std::string* newMsg = new std::string (Login + ":" + tmp, 256);
+        std::string* newMsg = new std::string (Login + ":" + tmp, MSG_LEN);
 
         it->get ()->write_some (boost::asio::buffer (*newMsg));
 

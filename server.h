@@ -6,13 +6,20 @@
 class server
 {
    public:
-    server () { smp.reset (new (std::list<boost::shared_ptr<User>>)); };
+    server (int port_)
+    {
+        smp.reset (new (std::list<boost::shared_ptr<User>>));
+        port = port_;
+        flag = true;
+    };
     ~server (){};
 
     void run ();
     void stop ();
-
+    bool get_flag () { return flag; };
    private:
+    bool flag;
+    int port;
     user_map_ptr smp;
 };
-#endif
+#endif  // SERVER_H

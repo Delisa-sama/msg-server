@@ -16,4 +16,4 @@ class Shared_queue
     std::queue<std::string> data;
 };
 typedef boost::shared_ptr<Shared_queue> MSG_queue_ptr;
-#endif
+#endif  // SHARED_QUEUE_H

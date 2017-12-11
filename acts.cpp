@@ -8,18 +8,19 @@ bool auth (msg_ptr log,
            ptree_ptr ptree_)
 {
     try {
-        int count = 0;
+        int count = 0; ///< Количество проверенных пользователей
 
         for (auto it = smp->begin (); it != smp->end (); ++it) {
             if ((((it->get ()->getLogin ()) == (*log)) &&
                  ((it->get ()->getPass ()) == (*pass))) ||
                 ((ptree_->get<std::string> ((*log))) == (*pass))) {
+#ifdef DEBUG
                 std::cout << "LOGGED: " << *log << std::endl;
-
+#endif
                 it->get ()->setStatus (types::Online);
                 it->get ()->Notify_all ();
 
-                return true;
+                return true; ///< Значит, что пользователь уже существует
             } else {
                 count++;
             }
@@ -27,8 +28,9 @@ bool auth (msg_ptr log,
 
         if ((count == smp->size ()) && (log->length () <= LOG_LEN) &&
             (pass->length () <= PASS_LEN)) {
+#ifdef DEBUG
             std::cout << "Creating new user: " << *log << std::endl;
-
+#endif
             boost::shared_ptr<User> tmp (
                 new User (log, pass, sock, types::Online));
 
@@ -41,7 +43,7 @@ bool auth (msg_ptr log,
             } catch (boost::property_tree::ptree_bad_path) {
                 std::cerr << "JSON Write error" << std::endl;
 
-                return false;
+                return false;///< Ошибка чтения из файла
             }
             return true;
         };
@@ -72,7 +74,9 @@ bool send_ (msg_ptr msg, msg_ptr login, user_map_ptr smp)
             std::cout << (*login) << std::endl;
             bytes = (it->get ()->getSock ())
                         ->write_some (boost::asio::buffer ((*msg)));
+#ifdef DEBUG
             std::cout << "Send msg to: " << *msg << std::endl;
+#endif
             return bytes == sizeof ((*msg));
         }
     }

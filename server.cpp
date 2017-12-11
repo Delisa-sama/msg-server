@@ -18,7 +18,7 @@ void server::run ()
         boost::thread_group* listener_threads = new boost::thread_group ();
 
         threads.create_thread (boost::bind (listener::handle_connections,
-                                            &service, q, 1488, smp, ptree_,
+                                            &service, q, port, smp, ptree_,
                                             &flag, listener_threads));
         threads.create_thread (boost::bind (receiver::loop, q, smp, ptree_));
 
@@ -36,7 +36,9 @@ void server::run ()
 
 void server::stop ()
 {
+#ifdef DEBUG
     std::cout << "Stopping server" << std::endl;
+#endif
     boost::system::error_code errCode;
     for (auto it = smp->begin (); it != smp->end (); ++it) {
         it->get ()->getSock ()->shutdown (

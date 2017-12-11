@@ -1,7 +1,22 @@
+/**
+		@file
+		@brief Заголовочный файл с описанием класса пользователя
+		
+		Данный заголовочный файл содержит описание класса,
+		реализующего хранение и работу с данными пользователя
+*/
 #ifndef USER_H
 #define USER_H
 #include <types.h>
 #include <list>
+
+/**
+		@brief Класс реализующий поведение пользователя
+		
+		Данный класс реализует хранение и работу с данными пользователя 
+		
+		@author Delisa
+*/
 
 class User
 {
@@ -9,22 +24,105 @@ class User
     User (msg_ptr Log, msg_ptr Pass, socket_ptr sock_, types::Status status_);
     ~User ();
 
+/**
+		@brief Функция-член, возвращающая логин пользователя
+		
+		Данная функция возвращает логин пользователя
+		@return Возвращает логин пользователя
+		
+		@author Delisa
+*/
+		
     std::string getLogin () { return Login; }
+
+/**
+		@brief Функция-член, возвращающая пароль пользователя
+		
+		Данная функция возвращает пароль пользователя
+		@return Возвращает пароль пользователя
+		
+		@author Delisa
+*/
+
     std::string getPass () { return Password; }
+
+/**
+		@brief Функция-член, возвращающая сокет пользователя
+		
+		Данная функция возвращает сокет пользователя
+		@return Возвращает сокет пользователя
+		
+		@author Delisa
+*/
+
     socket_ptr getSock () { return sock; }
+
+/**
+		@brief Функция-член, возвращающая статус пользователя
+		
+		Данная функция возвращает статус пользователя
+		@return Возвращает статус пользователя
+		
+		@author Delisa
+*/
+
     types::Status getStatus () { return status; };
+
+/**
+		@brief Функция-член, устанавливает статус пользователя
+		
+		Данная функция  устанавливает статус пользователя
+		@param[in] status_ Новый статус
+		
+		@author Delisa
+*/
+
     void setStatus (types::Status status_) { status = status_; }
+
+/**
+		@brief Функция-член, добавляет пользователя, которого необходимо оповещать
+		об изменении статуса данного пользователя
+		
+		Данная функция добавляет нового пользователя в множество пользователей, 
+		которых необходимо оповещать об изменении статуса данного пользователя
+		@param[in] Friend Сокет пользователя
+		
+		@author Delisa
+*/
+
     void addFriend (socket_ptr Friend) { Friends->insert (Friend); }
+
+/**
+		@brief Функция-член, возвращающая множество пользователей,
+		которых необходимо оповещать об изменении статуса данного пользователя
+		
+		Данная функция возвращает множество пользователей,
+		которых необходимо оповещать об изменении статуса данного пользователя
+		@return Возвращает множество пользователей (сокетов)
+		
+		@author Delisa
+*/
+
     std::set<socket_ptr>* getFriends () { return Friends; }
-    void Notify_all ();
+    
+/**
+		@brief Функция-член, оповещает всех пользователей из множества Friends
+		
+		Данная функция оповещает всех пользователей из множества Friends,
+		об изменении статуса данного пользователя
+		
+		@author Delisa
+*/		
+		
+		void Notify_all ();
 
    private:
-    std::string Login;
-    std::string Password;
-    socket_ptr sock;
-    types::Status status;
-    std::set<socket_ptr>* Friends;
+    std::string Login; ///< Логин пользователя
+    std::string Password; ///< Пароль пользователя
+    socket_ptr sock; ///< Сокет пользователя
+    types::Status status; ///< Статус пользователя
+    std::set<socket_ptr>* Friends; ///< Множество пользователей, которых необходимо оповещать
 };
 
-typedef boost::shared_ptr<std::list<boost::shared_ptr<User>>> user_map_ptr;
+typedef boost::shared_ptr<std::list<boost::shared_ptr<User>>> user_map_ptr; ///< Пул пользователей
 #endif  // USER_H

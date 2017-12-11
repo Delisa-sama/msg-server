@@ -8,6 +8,7 @@ void listener::listen (socket_ptr sock,
 {
     int bytes;
     boost::system::error_code ec;
+		
     while (ec == 0) {
         char buff[MSG_LEN] = {'\0'};
 
@@ -15,9 +16,9 @@ void listener::listen (socket_ptr sock,
 
         if (bytes > 0) {
             msg_ptr msg (new std::string (buff));
-
+#ifdef DEBUG
             std::cout << buff << std::endl;
-
+#endif
             if (static_cast<int> (buff[MSG_TYPE_POS]) == types::log) {
                 ptree_->put (*(get_token (msg, types::Login)),
                              *(get_token (msg, types::Data)));
@@ -56,8 +57,9 @@ void listener::handle_connections (boost::asio::io_service* service,
             boost::asio::ip::tcp::endpoint (boost::asio::ip::tcp::v4 (), port));
 
         socket_ptr sock (new boost::asio::ip::tcp::socket (*service));
+#ifdef DEBUG
         std::cout << "Waiting new user" << std::endl;
-
+#endif
         acceptor.accept (*sock);
 
         listener_threads->create_thread (
